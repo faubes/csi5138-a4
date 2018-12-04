@@ -136,61 +136,127 @@ For each of these algorithms, I contrast generated images with real sample image
 
 \section{Variational Autoencoder}
 
-For this first VAE model ({\em vae.py}), the model is a simple fully-connected hourglass-structure with a bottleneck of dimension 20.
+For this first VAE model ({\em mnist\_vae.py} and {\em cifar10\_vae.py}), the
+encoder and decoders are simple fully-connected structures with a bottleneck of dimension 20.
 
 \begin{figure}[h]
-\caption{MNIST VAE Reconstructions After 20 Training Epochs}
-\centering
-\includegraphics[width=0.75\textwidth]{vae_reconstruction_20_epochs}
+ \caption{MNIST VAE Reconstructions After 20 Training Epochs}
+ \centering
+ \includegraphics[width=0.65\textwidth]{mnist_vae_reconstruction_20epochs}
+\end{figure}
+
+For the MNIST dataset, the reconstructions are fairly good after 20 training epochs.
+Sampling from the latent space, however, produces only vaguely numberlike shapes:
+
+\newpage
+
+\begin{figure}[h]
+ \caption{MNIST VAE-Generated Sample After 20 (left), 50 (right) Training Epochs}
+ \centering
+ \includegraphics[width=0.4\textwidth]{mnist_vae_sample_20epochs}
+ \includegraphics[width=0.4\textwidth]{mnist_vae_sample_50epochs}
+\end{figure}
+
+After an additional 30 training epochs, the reconstructions are slightly better, but
+again the generated images are not great.
+
+The technique fared even worse on the CIFAR10 dataset, which has a greater variety
+and colour.
+
+\begin{figure}[h]
+ \caption{MNIST VAE Reconstructions After 50 Training Epochs}
+ \centering
+ \includegraphics[width=0.65\textwidth]{mnist_vae_reconstruction_50epochs}
+\end{figure}
+
+
+\begin{figure}[h]
+ \caption{CIFAR10 VAE Reconstructions After 20 Training Epochs}
+ \centering
+ \includegraphics[width=0.65\textwidth]{cifar10_vae_reconstruction_20epochs}
+\end{figure}
+
+Even after 50 training epochs, the VAE is unable to reconstruct the CIFAR10
+images with any fidelity.
+
+\begin{figure}[h]
+ \caption{CIFAR10 VAE Reconstructions After 50 Training Epochs}
+ \centering
+ \includegraphics[width=0.65\textwidth]{cifar10_vae_reconstruction_50epochs}
+\end{figure}
+
+
+\begin{figure}[h]
+ \caption{CIFAR10 VAE-Generated Sample After 20 (left), 50 (right) Training Epochs}
+ \centering
+ \includegraphics[width=0.4\textwidth]{cifar10_vae_sample_20epochs}
+ \includegraphics[width=0.4\textwidth]{cifar10_vae_sample_50epochs}
 \end{figure}
 
 \begin{figure}[h]
-\caption{CIFAR10 VAE Reconstructions After 20 Training Epochs}
-\centering
-\includegraphics[width=0.75\textwidth]{cifar10_reconstruction_20_epochs}
+ \caption{Plotting the Loss Function for VAE With MNIST (left) and CIFAR10 (right)}
+ \centering
+ \includegraphics[width=0.4\textwidth]{mnist_vae_loss_plot}
+ \includegraphics[width=0.4\textwidth]{cifar10_vae_loss_plot}
 \end{figure}
 
-\section{Generative Adversarial Network}
+\newpage
 
-GANs were first described in \cite{goodfellow2014generative}. 
-In my first attempt, I used modeled the generator and discriminator networks using fully-connected layers but the results were unimpressive.
 
-For my second attempt, I followed the tutorial linked above which is based on \cite{radford2015unsupervised},
-in which the authors implement the discriminator and generator using convolutions (and so-called transpose convolutions).
+For VAE, the loss function for consists of a cross-entropy term and the KL divergence term.
+Since both terms should be non-negative, I suspect that the KL term
+(which is negated in the function) is dominating the cross-entropy, leading to
+these negative values. The values do seem to be increasing, so perhaps
+additional training is warranted.
+
+\newpage
+
+\section{Generative Adversarial Network\cite{goodfellow2014generative}}
+
+In my first GAN attempt, I modeled the generator and discriminator networks using fully-connected layers but the results were unimpressive.
+
+For my second attempt, I followed the tutorial linked in the intro which is based on \cite{radford2015unsupervised}. In this paper, the authors implement the discriminator and generator using convolutions (and so-called transpose convolutions).
 Below are sample images generated after 25 and 50 training epochs.
 
 \begin{figure}[h]
-\caption{DCGAN Generated MNIST Images After 50 Epochs}
-\centering
-\includegraphics[width=0.75\textwidth]{mnist_gan_real_v_fake_50_epochs}
+ \caption{DCGAN Generated MNIST Images After 25, 50 Epochs}
+ \centering
+ \includegraphics[width=0.9\textwidth]{mnist_gan_real_v_fake_50_epochs}
 \end{figure}
+
+With both datasets, the quality of images does seem to improve with longer training.
+The MNIST fakes, in particular, are fairly convincing.
 
 \begin{figure}[h]
-\caption{DCGAN Generated CIFAR10 Images After 50 Epochs}
-\centering
-\includegraphics[width=0.75\textwidth]{cifar10_gan_real_v_fake_50_epochs}
+ \caption{DCGAN Generated CIFAR10 Images After 25, 50 Epochs}
+ \centering
+ \includegraphics[width=0.9\textwidth]{cifar10_gan_real_v_fake_50_epochs}
 \end{figure}
 
-With both datasets, the quality of images does seem to improve with longer training. However, even after 50 epochs the CIFAR10 generated 
-images are of disappointing quality. 
+However, even after 50 epochs the CIFAR10 generated images are of disappointing quality.
 
+\newpage
 
 \section{Wasserstein GAN Variant}
 
 \begin{figure}[h]
-\caption{WGAN Generated MNIST Images After 50 Epochs}
-\centering
-\includegraphics[width=0.75\textwidth]{MNIST_wgan_real_v_fake_50_epochs}
+ \caption{WGAN Generated MNIST Images After 20 Epochs}
+ \centering
+ \includegraphics[width=0.75\textwidth]{mnist_wgan_real_v_fake_20_epochs}
 \end{figure}
 
 \begin{figure}[h]
-\caption{WGAN Generated CIFAR10 Images After 50 Epochs}
-\centering
-\includegraphics[width=0.75\textwidth]{cifar10_wgan_real_v_fake_50_epochs}
+ \caption{WGAN Generated CIFAR10 Images After 50 Epochs}
+ \centering
+ \includegraphics[width=0.75\textwidth]{cifar10_wgan_real_v_fake_50_epochs}
 \end{figure}
 
+\newpage
 
 \section{Conclusion}
+
+I should have allotted more time for building the models, testing them and trying
+different parameters.
 
 \newpage
 \bibliographystyle{IEEEtran}
