@@ -124,7 +124,7 @@ Models are built using the MNIST and CIFAR10 data sets.
 As a preprocessing step, the words images are converted to tensors and normalized.
 
 A module for loading the data ({\em load\_data.py}) encapsulates the DataLoader functions of PyTorch.
-Thankfully, both of these datasets are available in the Torchvision package.
+Thankfully, loaders for both of these datasets are available in the Torchvision package.
 
 The VAE code is based on \url{https://github.com/pytorch/examples/blob/master/vae/main.py}
 
@@ -132,11 +132,11 @@ The GAN code is based on \url{https://pytorch.org/tutorials/beginner/dcgan_faces
 
 Finally, the WGAN is based on \url{https://wiseodd.github.io/techblog/2017/02/04/wasserstein-gan/}
 
-For each of the algorithms, I contrast generated images with real sample images from both datasets.
+For each of these algorithms, I contrast generated images with real sample images and examine the plot of the loss functions during training.
 
 \section{Variational Autoencoder}
 
-For this first model ({\em vae.py}), the model is a simple fully-connected hourglass-structure with a bottleneck of dimension 100.
+For this first VAE model ({\em vae.py}), the model is a simple fully-connected hourglass-structure with a bottleneck of dimension 20.
 
 \begin{figure}[h]
 \caption{MNIST VAE Reconstructions After 20 Training Epochs}

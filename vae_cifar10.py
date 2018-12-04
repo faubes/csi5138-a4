@@ -27,7 +27,6 @@ from torchvision.utils import save_image
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 
-
 parser = argparse.ArgumentParser(description='PyTorch VAE')
 parser.add_argument('--batch_size', type=int, default=128, metavar='N',
                     help='input batch size for training (default: 128)')
@@ -56,25 +55,26 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 datapath = 'D:/datasets/'
 
 transform = transforms.Compose([transforms.ToTensor(),
-	transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-trainset = torchvision.datasets.MNIST(root=datapath + "mnist", train=True, download=True, transform=transform)
+			transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+			
+trainset = torchvision.datasets.CIFAR10(root=datapath + "cifar10/", train=True, download=True, transform=transform)
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers)
-testset = torchvision.datasets.MNIST(root=datapath + "mnist", train=False, download=True, transform=transform)
+testset = torchvision.datasets.CIFAR10(root=datapath + "cifar10/", train=False, download=True, transform=transform)
 test_loader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 classes = range(10)
-input_dim = 28
-nc = 1
-filestr = "mnist_vae_"
-	
+input_dim = 32
+nc = 3
+filestr = "cifar10_vae_"
+
 class VAE(nn.Module):
     def __init__(self):
         super(VAE, self).__init__()
 
-        self.fc1 = nn.Linear(28 * 28, 400)
+        self.fc1 = nn.Linear(nc * input_dim * input_dim, 400)
         self.fc21 = nn.Linear(400, 20)
         self.fc22 = nn.Linear(400, 20)
         self.fc3 = nn.Linear(20, 400)
-        self.fc4 = nn.Linear(400, 28 * 28)
+        self.fc4 = nn.Linear(400, nc * input_dim * input_dim)
 
     def encode(self, x):
         h1 = F.relu(self.fc1(x))
@@ -90,7 +90,7 @@ class VAE(nn.Module):
         return torch.sigmoid(self.fc4(h3))
 
     def forward(self, x):
-        mu, logvar = self.encode(x.view(-1, 28*28))
+        mu, logvar = self.encode(x.view(-1, nc * input_dim * input_dim ))
         z = self.reparameterize(mu, logvar)
         return self.decode(z), mu, logvar
 
@@ -101,7 +101,7 @@ optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 # Reconstruction + KL divergence losses summed over all elements and batch
 def loss_function(recon_x, x, mu, logvar):
-    BCE = F.binary_cross_entropy(recon_x, x.view(-1, 28 * 28), reduction='sum')
+    BCE = F.binary_cross_entropy(recon_x, x.view(-1, nc * input_dim * input_dim), reduction='sum')
 
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
